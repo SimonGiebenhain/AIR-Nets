@@ -1,3 +1,20 @@
+#custom
+/experiments/*
+/shapenet/data/*
+/models/utils/libmcubes/mcubes.cpp
+/models/utils/libsimplify/simplify_mesh.cpp
+/models/utils/libsimplify/build
+
+*.jpg
+*.png
+*.ply
+*.off
+*.npz
+*.gif
+
+
+#### python template following ####
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
