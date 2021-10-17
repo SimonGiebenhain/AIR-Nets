@@ -1,0 +1,18 @@
+training:
+  lr: 0.0001
+  lr_decay_interval: null
+  lr_decay_factor: null
+  grad_clip: null
+  npoints_decoder: 2000
+  ckpt: null
+  batch_size: 64
+  pc_samples: 3000
+mode:
+  noisy_obs: 0.005
+encoder:
+  type: 'onet'
+  c_dim: 512
+  hidden_dim: 512
+decoder:
+  type: 'onet'
+

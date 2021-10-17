@@ -1,0 +1,62 @@
+import data.ShapeNetDatasets as shapenet_data
+import argparse
+from models.generation import Generator
+from generation_iterator import gen_iterator
+import json, yaml
+import torch
+
+from models.build_model import build_model
+
+# python generate.py -exp_name pc3000 -retrieval_res 200 -pc_samples 3000 -checkpoint 228
+parser = argparse.ArgumentParser(
+    description='Run generation'
+)
+
+parser.add_argument('-mode', default='test', type=str)
+parser.add_argument('-method', default='mise', type=str)
+parser.add_argument('-retrieval_res', default=256, type=int)
+parser.add_argument('-checkpoint', type=int, required=True)
+parser.add_argument('-exp_name', required=True, type=str)
+parser.add_argument('-cuda_device', default=0, type=int)
+parser.add_argument('-data_type', required=True, type=str)
+
+parser.add_argument('-batch_points', default=400000, type=int)
+
+args = parser.parse_args()
+
+try:
+    args = parser.parse_args()
+except:
+    args = parser.parse_known_args()[0]
+
+exp_dir = './experiments/{}/'.format(args.exp_name)
+fname = exp_dir + 'configs.yaml'
+with open(fname, 'r') as f:
+    print('Loading config file from: ' + fname)
+    CFG = yaml.safe_load(f)
+
+
+print(CFG)
+torch.cuda.set_device(args.cuda_device)
+
+encoder, decoder = build_model(CFG)
+encoder.float()
+decoder.float()
+
+CFG['training']['batch_size'] = 1
+if args.data_type in ['ifnet', 'onet']:
+    test_dataset = shapenet_data.get_shapenet_dataset('test', args.data_type, CFG)
+elif args.data_type == 'human':
+    test_dataset = shapenet_data.get_human_dataset(CFG)
+else:
+    raise ValueError('Unknown data type {}'.format(args.data_type))
+
+is_IF = CFG['decoder']['type'] == 'ifnet'
+is_ConvO = CFG['decoder']['type'] == 'convonet'
+
+gen = Generator(encoder, decoder, 0.5, args.exp_name, checkpoint=args.checkpoint, resolution=args.retrieval_res,
+                    batch_points=args.batch_points, is_IF=is_IF, method=args.method)
+
+out_path = 'experiments/{}/evaluation_{}_@{}'.format(args.exp_name, args.checkpoint, args.retrieval_res)
+
+gen_iterator(out_path, test_dataset, gen)

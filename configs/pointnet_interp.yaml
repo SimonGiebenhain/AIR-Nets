@@ -1,0 +1,25 @@
+training:
+  lr: 0.0005 #5e-4
+  lr_decay_interval: 150
+  lr_decay_factor: 0.2
+  grad_clip: 1
+  npoints_decoder: 2000
+  ckpt: null
+  batch_size: 64
+  pc_samples: 300
+  is_ANP: False
+  L: -1
+mode:
+  single_view: False
+  is_IP: False
+  noisy_obs: null
+encoder:
+  type: 'airnet_pointnet++'
+  npoints_per_layer: [300, 200, 100]
+  encoder_nneigh: 16
+  encoder_attn_dim: 256
+  nfinal_transformers: 3
+decoder:
+  type: 'airnet_interp'
+  decoder_attn_dim: 200
+  decoder_hidden_dim: 128

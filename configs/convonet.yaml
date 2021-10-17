@@ -1,0 +1,30 @@
+training:
+  lr: 0.0001
+  lr_decay_interval: null
+  lr_decay_factor: null
+  grad_clip: null
+  npoints_decoder: 2000
+  ckpt: null
+  batch_size: 64
+  pc_samples: 3000
+mode:
+  noisy_obs: 0.005
+encoder:
+  type: 'convonet'
+  encoder_kwargs:
+    hidden_dim: 32
+    plane_type: ['xz', 'xy', 'yz']
+    plane_resolution: 64
+    unet: True
+    unet_kwargs:
+      depth: 4
+      merge_mode: concat
+      start_filts: 32
+  c_dim: 32
+  padding: 0.02
+decoder:
+  type: 'convonet'
+  decoder_kwargs:
+    sample_mode: bilinear # bilinear / nearest
+    hidden_size: 32
+

@@ -1,0 +1,24 @@
+training:
+  lr: 0.0005 #5e-4
+  lr_decay_interval: 150
+  lr_decay_factor: 0.2
+  grad_clip: 1
+  npoints_decoder: 2000
+  ckpt: null
+  batch_size: 64
+  pc_samples: 300
+mode:
+  noisy_obs: null
+encoder:
+  type: 'airnet'
+  encoder_attn_dim: 256
+  npoints_per_layer: [300, 200, 100]
+  encoder_nneigh: 16
+  encoder_nneigh_reduced: 16
+  nfinal_trans: 3
+  encoder_attn_dim_reduced: 256
+  full_SA: True
+decoder:
+  type: 'interp' # 'ldif'
+  decoder_attn_dim: 200
+  decoder_hidden_dim: 128
