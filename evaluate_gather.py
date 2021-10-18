@@ -33,7 +33,7 @@ if __name__ == '__main__' and not repair:
     if args.data_type == 'ifnet':
         data_path = 'shapenet/data/'
     elif args.data_type == 'onet':
-        data_path = '/abyss/home/occupancy_networks/data/ShapeNet'
+        data_path = 'occupancy_networks/data/ShapeNet'
     elif args.data_type == 'human':
         data_path = 'MPI-FAUST/test/scans'
     else:

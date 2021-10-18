@@ -109,9 +109,9 @@ if __name__ == '__main__':
     if args.data_type == 'ifnet':
         data_path = 'shapenet/data'
     elif args.data_type == 'onet':
-        data_path = '/abyss/home/occupancy_networks/data/ShapeNet'
+        data_path = 'occupancy_networks/data/ShapeNet'
     elif args.data_type == 'human':
-        data_path = 'MPI-FAUST/test/scans'
+        data_path = 'MPI-FAUST/test/scans' #TODO fix path
     else:
         raise ValueError('Unexpected data type: ' + str(args.data_type))
 
