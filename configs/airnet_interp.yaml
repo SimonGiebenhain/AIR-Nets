@@ -1,6 +1,6 @@
 training:
   lr: 0.0005 #5e-4
-  lr_decay_interval: 150
+  lr_decay_interval: 200
   lr_decay_factor: 0.2
   grad_clip: 1
   npoints_decoder: 2000
