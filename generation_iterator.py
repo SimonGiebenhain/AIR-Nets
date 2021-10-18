@@ -20,7 +20,6 @@ def gen_iterator(out_path, dataset, gen_p, shuffle=True):
 
     data_tupels = []
     for i, data in tqdm(enumerate(loader)):
-
         path = os.path.normpath(data['path'][0])
         path_end = path.split(os.sep)[-1]
         splits = path_end.split('.')
@@ -47,6 +46,9 @@ def gen_iterator(out_path, dataset, gen_p, shuffle=True):
                 create_meshes(data_tupels)
                 data_tupels = []
             logits = gen.generate_mesh(data)
+            if 'input_pc' in data:
+                data['inputs'] = data['input_pc']
+                del data['input_pc']
             data_tupels.append((logits, data, export_path, ''))
         except Exception as err:
             print('Error with {}: {}'.format(data['path'][0], traceback.format_exc()))

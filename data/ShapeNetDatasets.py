@@ -142,10 +142,13 @@ class ShapeReconstructionDataset(Dataset):
         if self.voxelize:
             input_occupancies = np.zeros(len(self.grid_points), dtype=np.int8)
             _, idx = self.kdtree.query(obs)
+            input_pc = np.asarray(obs, dtype=np.float32)
             input_occupancies[idx] = 1
             input = np.reshape(input_occupancies, (self.res,) * 3)
             obs = np.array(input, dtype=np.float32)
             #sup_coords = np.array(sup_coords_vox, dtype=np.float32)
+            return {'occupancies': sup_occupancies.astype(np.float32), 'points': sup_coords.astype(np.float32), # TODO change name of points to be more explicit?
+                    'inputs': obs.astype(np.float32), 'input_pc': input_pc, 'path': path}
         return {'occupancies': sup_occupancies.astype(np.float32), 'points': sup_coords.astype(np.float32), # TODO change name of points to be more explicit?
                 'inputs': obs.astype(np.float32), 'path': path}
 
@@ -241,9 +244,11 @@ class HumanDataset(Dataset):
         if self.voxelize:
             input_occupancies = np.zeros(len(self.grid_points), dtype=np.int8)
             _, idx = self.kdtree.query(obs)
+            input_pc = np.asarray(obs, dtype=np.float32)
             input_occupancies[idx] = 1
             input = np.reshape(input_occupancies, (self.res,) * 3)
             obs = np.array(input, dtype=np.float32)
+            return {'inputs': obs, 'input_pc': input_pc, 'path': path}
 
         return {'inputs': obs, 'path': path}
 
