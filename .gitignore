@@ -1,6 +1,8 @@
 #custom
 /experiments/*
 /shapenet/data/*
+/MPI-FAUST/*
+/occupancy_networks/*
 /models/utils/libmcubes/mcubes.cpp
 /models/utils/libsimplify/simplify_mesh.cpp
 /models/utils/libsimplify/build
@@ -10,6 +12,8 @@
 *.ply
 *.off
 *.npz
+*.npy
+*.tar
 *.gif
 
 
