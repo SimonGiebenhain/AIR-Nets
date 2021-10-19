@@ -126,15 +126,14 @@ Note that checkpoints (including the optimizer) are saved after each epoch in th
 
 
 # Generation
-To generate the reconstructed meshes for the test set, run
+To generate reconstructions of the test set, run
 ```
-python generate.py -exp_name YOUR_EXP_NAME -checkpoint CKPT_NUM -batch_points 400000 -pc_samples NUM_INPUT_POINTS -retrieval_res RES
+python generate.py -exp_name YOUR_EXP_NAME -checkpoint CKPT_NUM -batch_points 400000 -method REC_METHOD 
 ```
-This will place the generate meshes in the `.OFF`format in `experiments/YOUR_EXP_NAME/evaluation_CKPT_NUM_@RES/generation`. 
-`-retrieval_res` specifies the resolution used for the marching cubes algorithm. Note that the runtime scales cubically w.r.t. `RES`. We used 256, which achieves visually pleasing results, but takes about 11-12s per mesh.
-Also, consider using the maximal `-batch_points` possible for your GPU.
+where `CKPT_NUM` specifies the epoch to load the model from, `-batch_points` specifies how many points are batched together and may have top be adapted to your GPU size and `REC_METHOD` can either be `mise` or `mcubes`. The former (and recommended) option uses the MISE algorithm for reconstruciton. The latter uses the vanilla marching cubes algorithm. For the MISE you can specifiy to additional paramters `-mise_res` (initial resolution, default is 64) and `-mise_steps` (number of refinement steps, defualt 2). (Note that we used 3 refinement steps for the main results of the dense models in the paper, just to be on the save side and not miss any details.) For the regular marching cubes algorithm you can use `-mcubes_res` to specify the resolution of the grid (default 128). Note that the cubic scaling quickly renders this really slow.
 
-> The generation script can be run on multiple machines in parallel in order to increase generation speed significantly. 
+The command will place the generate meshes in the `.OFF`format in `experiments/YOUR_EXP_NAME/evaluation_CKPT_NUM_@mise_resxmise_steps/generation` or `experiments/YOUR_EXP_NAME/evaluation_CKPT_NUM_@mcubes_res/generation` depending on `method`.
+
 
 # Evaluation
 Running
@@ -160,7 +159,7 @@ simon.giebenhain (at] uni-konstanz {dot| de
 
 # Citation
 ```
-@inproceedings{giebenhain2020airnets,
+@inproceedings{giebenhain2021airnets,
 title={AIR-Nets: An Attention-Based Framework for Locally Conditioned Implicit Representations},
 author={Giebenhain, Simon and Goldluecke, Bastian},
 booktitle={2021 International Conference on 3D Vision (3DV)},
