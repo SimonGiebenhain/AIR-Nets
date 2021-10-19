@@ -14,9 +14,9 @@ def to_off(path):
     input_file  = path + '/isosurf.obj'
     output_file = path + '/isosurf.off'
 
-    cmd = 'meshlabserver -i {} -o {}'.format(input_file,output_file)
+    #cmd = 'meshlabserver -i {} -o {}'.format(input_file,output_file)
     # if you run this script on a server: comment out above line and uncomment the next line
-    # cmd = 'xvfb-run -a -s "-screen 0 800x600x24" meshlabserver -i {} -o {}'.format(input_file,output_file)
+    cmd = 'xvfb-run -a -s "-screen 0 800x600x24" meshlabserver -i {} -o {}'.format(input_file,output_file)
     os.system(cmd)
 
 

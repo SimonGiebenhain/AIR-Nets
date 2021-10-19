@@ -14,7 +14,9 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-mode', default='test', type=str)
 parser.add_argument('-method', default='mise', type=str)
-parser.add_argument('-retrieval_res', default=256, type=int)
+parser.add_argument('-mcubes_res', default=256, type=int)
+parser.add_argument('-mise_res', default=64, type=int)
+parser.add_argument('-mise_steps', default=2, type=int)
 parser.add_argument('-checkpoint', type=int, required=True)
 parser.add_argument('-exp_name', required=True, type=str)
 parser.add_argument('-cuda_device', default=0, type=int)
@@ -54,9 +56,17 @@ else:
 is_IF = CFG['decoder']['type'] == 'ifnet'
 is_ConvO = CFG['decoder']['type'] == 'convonet'
 
-gen = Generator(encoder, decoder, 0.5, args.exp_name, checkpoint=args.checkpoint, resolution=args.retrieval_res,
+if args.method not in ['mcubes', 'mise']:
+    raise ValueError('Isosurfaces extraction method ' + args.method + ' not known. Has to be one of: "mise", "mcubes"!')
+if args.method == 'mcubes':
+    retrieval_specs = args.mcubes_res
+    retrieval_sepcs_str = str(retrieval_specs)
+else:
+    retrieval_specs = (args.mise_res, args.mise_steps)
+    retrieval_specs_str = str(retrieval_specs[0]) + 'x' + str(retrieval_specs[1])
+gen = Generator(encoder, decoder, 0.5, args.exp_name, checkpoint=args.checkpoint, resolution=retrieval_specs,
                     batch_points=args.batch_points, is_IF=is_IF, method=args.method)
 
-out_path = 'experiments/{}/evaluation_{}_@{}'.format(args.exp_name, args.checkpoint, args.retrieval_res)
+out_path = 'experiments/{}/evaluation_{}_@{}'.format(args.exp_name, args.checkpoint, retrieval_specs_str)
 
 gen_iterator(out_path, test_dataset, gen)

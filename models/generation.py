@@ -53,7 +53,7 @@ class Generator(object):
 
     def get_logits_MISE(self, encoding):
         threshold = np.log(self.threshold) - np.log(1. - self.threshold)
-        mesh_extractor = libmise.MISE(64, 2, threshold)
+        mesh_extractor = libmise.MISE(self.resolution[0], self.resolution[1], threshold)
         box_size = 1 + 0.02  # 1 + self.padding
         points = mesh_extractor.query()
         while points.shape[0] != 0:
@@ -168,5 +168,10 @@ class Generator(object):
             self.encoder.load_state_dict(checkpoint['encoder_state_dict'])
             self.decoder.load_state_dict(checkpoint['decoder_state_dict'])
         else:
-            self.encoder.load_state_dict(checkpoint['encoder_state_dict'], strict=True)
-            self.decoder.load_state_dict(checkpoint['decoder_state_dict'], strict=True)
+            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.0.weight']
+            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.0.bias']
+            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.2.weight']
+            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.2.bias']
+            #torch.save(checkpoint, path)
+            self.encoder.load_state_dict(checkpoint['encoder_state_dict'])
+            self.decoder.load_state_dict(checkpoint['decoder_state_dict'])

@@ -37,7 +37,7 @@ def build_model(CFG):
         raise ValueError('Unknown encoder type: ' + enc_method + '!!')
 
     dec_method = CFG['decoder']['type']
-    if dec_method in ['airnet', 'pointnet++']:
+    if dec_method in ['airnet', 'interp', 'ldif']:
         from . import AIRnet
         decoder = AIRnet.get_decoder(CFG)
     elif dec_method == 'ifnet':

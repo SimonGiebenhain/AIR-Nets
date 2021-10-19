@@ -8,11 +8,13 @@ my_theme.background = 'white'
 pv.global_theme.load_theme(my_theme)
 
 #folder = '../recs/FOLDER_TO_RECS' #todo
-folder = '../recs/trainIF'
+folder = '../recs/airnet_pretrained_mcubes'
 files = os.listdir(folder)
 
+show_input = 'True'
+
 for f in files:
-    if f.startswith('.') or f == 'trainIF_human':
+    if f.startswith('.'):
         continue
     for i, ff in enumerate(os.listdir(folder + '/' + f)):
         m = pv.read(folder + '/' + f + '/' + ff + '/surface_reconstruction.off')
@@ -28,5 +30,6 @@ for f in files:
         pc.transform(rot_axes)
         pl = pv.Plotter()
         pl.add_mesh(m)
-        pl.add(input_pc)
+        if show_input:
+            pl.add_mesh(pc, color='black')
         pl.show()
