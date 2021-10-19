@@ -67,24 +67,24 @@ ls shapenet/*.tar.gz |xargs -n1 -i tar -xf {} -C shapenet/data/
 Next, the input and supervision data is prepared.
 First, the data is converted to the .off-format and scaled (such that the longest edge of the bounding box for each object has unit length) using
 ```
-python preprocessing/convert_to_scaled_off.py
+python data_processing/convert_to_scaled_off.py
 ```
 Then the point cloud input data can be created using
 ```
-python preprocessing/sample_surface.py
+python data_processing/sample_surface.py
 ```
 which samples 30.000 point uniformly distributed on the surface of the ground truth mesh. During training and testing the input point clouds will be randomly subsampled from these surface samples.
 
 The coordinates and corresponding ground truth occupancy values used for supervision during training can be generated using
 ```
-python preprocessing/boundary_sampling.py -sigma 0.1
-python preprocessing/boundary_sampling.py -sigma 0.01
+python data_processing/boundary_sampling.py -sigma 0.1
+python data_processing/boundary_sampling.py -sigma 0.01
 ```
 where `-sigma` specifies the standard deviation of the normally distributed displacements added onto surface samples. Each call will generate 100.000 samples near the object's surface for which ground truth occupancy values are generated using the implicit waterproofing algorithm from [IF-Nets supplementary](http://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet_supp.pdf). I have not experimented with any other values for sigma, and just copied the proposed values.
 
 In order to remove meshes that could not be preprocessed correctly (should not be more than around 15 meshes) you should run
 ```
-python preprocessing/filter_corrupted.py -file 'surface_30000_samples.npy' -delete
+python data_processing/filter_corrupted.py -file 'surface_30000_samples.npy' -delete
 ```
 Pay attantion with this command, i.e. the directory of all objects that don't contain the `surface_30000_samples.npy` file are deleted. If you chose to use a different number points, please make sure to adapt the command accordingly.
 
@@ -138,23 +138,22 @@ The command will place the generate meshes in the `.OFF`format in `experiments/Y
 # Evaluation
 Running
 ```
-python data_processing/evaluate.py -reconst -generation_path experiments/YOUR_EXP_NAME/evaluation_CKPT_NUM_@RES/generation
+python data_processing/evaluate.py -reconst -generation_path experiments/YOUR_EXP_NAME/evaluation_CKPT.../generation
 ```
-will evaluate the generated meshes using 3 metrics: the vIOU, the Chamfer distance and a Normal consistency score. 
-> Again this script can be run in parallel on multiple machines.
+will evaluate the generated meshes using the most common metrics: the volumetric IOU, the Chamfer distance (L1 and L2), the Normal consistency and F-score. 
 
-The results are gathered in 
-`experiment/YOUR_EXP_NAME/evaluation_CKPT_NUM_@RES` by running
+The results are summarized 
+`experiment/YOUR_EXP_NAME/evaluation_CKPT.../evaluation_results.pkl` by running
 ```
-python data_processing/evaluate_gather.py -generation_path experiments/YOUR_EXP_NAME/evaluation_CKPT_NUM_@RES/generation
+python data_processing/evaluate_gather.py -generation_path experiments/YOUR_EXP_NAME/evaluation_CKPT.../generation
 ```
 
 
 # Pretrained Models
-To be released within the next few days
+To be released within the next few days.
 
 # Contact
-simon.giebenhain (at] uni-konstanz {dot| de
+For questions, comments and to discuss ideas please contact Simon Giebenhain via simon.giebenhain (at] uni-konstanz {dot| de.
 
 
 # Citation
@@ -169,9 +168,10 @@ organization={IEEE}
 ```
 
 # Acknowledgements
-A huge thanks to Julian Chibane, the author of IF-Nets and the corresponding [GitHub](https://github.com/jchibane/if-net) repository, that serves as a baseline for this repo. Please also cite their work!
-This project uses libraries for [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et. al. CVPR'19] 
-> and the ShapeNet data preprocessed for [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], please also cite them if you use our code.
+Large parts of this repository are copied from Julian Chibane's [GitHub repository](https://github.com/jchibane/if-net) of the [IF-Net](https://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet.pdf) paper. Please consider also citing their work, when using this repository!
+This project also uses libraries form [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et al. CVPR'19](https://avg.is.tuebingen.mpg.de/publications/occupancy-networks) and from [Convolutional Occupancy Networks](https://github.com/autonomousvision/convolutional_occupancy_networks) by [Peng et al. ECCV'20].
+ We also want to thank [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], who provided their preprocessed ShapeNet data publicly.
+ Please consider to cite them if you use our code.
 
 
 
@@ -189,4 +189,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 You understand and agree that the authors are under no obligation to provide either maintenance services, update services, notices of latent defects, or corrections of defects with regard to the Software. The authors nevertheless reserve the right to update, modify, or discontinue the Software at any time.
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. You agree to cite the Implicit Functions in Feature Space for 3D Shape Reconstruction and Completion paper in documents and papers that report on research using this Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. You agree to cite the `Implicit Functions in Feature Space for 3D Shape Reconstruction and Completion` paper and the `AIR-Nets: An Attention-Based Framework for Locally Conditioned Implicit Representations` paper in documents and papers that report on research using this Software.
