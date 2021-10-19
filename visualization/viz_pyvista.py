@@ -8,7 +8,7 @@ my_theme.background = 'white'
 pv.global_theme.load_theme(my_theme)
 
 #folder = '../recs/FOLDER_TO_RECS' #todo
-folder = '../recs/airnet_pretrained_mcubes'
+folder = '../recs/airnet_pretrained_mise'
 files = os.listdir(folder)
 
 show_input = 'True'
