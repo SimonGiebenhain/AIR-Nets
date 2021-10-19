@@ -3,23 +3,19 @@ training:
   lr_decay_interval: 200
   lr_decay_factor: 0.2
   grad_clip: null
-  npoints_decoder: 2000
+  npoints_decoder: 1000
   ckpt: null
   batch_size: 64
   pc_samples: 300
-  is_ANP: False
-  L: -1
 mode:
-  single_view: False
-  is_IP: False
   noisy_obs: null
 encoder:
-  type: 'airnet_pointnet++'
+  type: 'pointnet++'
   npoints_per_layer: [300, 200, 100]
   encoder_nneigh: 16
   encoder_attn_dim: 256
   nfinal_transformers: 3
 decoder:
-  type: 'airnet_interp'
+  type: 'interp'
   decoder_attn_dim: 200
   decoder_hidden_dim: 128

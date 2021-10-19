@@ -8,11 +8,11 @@ training:
   batch_size: 64
   pc_samples: 300
 mode:
-  noisy_obs: 0.005
+  noisy_obs: null
 encoder:
   type: 'airnet'
   encoder_attn_dim: 256
-  npoints_per_layer: [300, 150, 64]
+  npoints_per_layer: [300, 200, 100]
   encoder_nneigh: 16
   encoder_nneigh_reduced: 16
   nfinal_trans: 3
