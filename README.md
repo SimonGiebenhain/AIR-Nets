@@ -9,9 +9,8 @@ More qualitative results:
 
 
 # Install
-TODO
-All experiments with AIR-Nets were run using CUDA version 11.2 and the official pytorch docker image `nvcr.io/nvidia/pytorch:20.11-py3`, as published by nvidia.
-However, as the model is solely based on common mechanisms, older CUDA and pytorch versions should also work.
+All experiments with AIR-Nets were run using CUDA version 11.2 and the official pytorch docker image `nvcr.io/nvidia/pytorch:20.11-py3`, as published by nvidia [here](https://ngc.nvidia.com/catalog/containers/nvidia:pytorch).
+However, as the model is solely based on simple, common mechanisms, older CUDA and pytorch versions should also work.
 We provide the `air-net_env.yaml` file that holds all python requirements for this project. To conveniently install them automatically with [anaconda](https://www.anaconda.com/) you can use:
 ```
 conda env create -f air-net_env.yml
@@ -24,25 +23,39 @@ pip install pointnet2_ops_lib/.
 ```
 inorder to install the cuda implementation of farthest point sampling (FPS).
 
+Running
+```
+python setup.py build_ext --inplace
+```
+installs the MISE algorithm (see http://www.cvlibs.net/publications/Mescheder2019CVPR.pdf) for extracting the reconstructed shapes as meshes.
 
+## I am missing instructions for torch scatter!
 
 # Data Preparation
-TODO
-The data preparation pipeline is copied from [IF-Nets](https://github.com/jchibane/if-net) and slightly adapted to prepare input point clouds without discretization. Furthermore only a subset of the prescribed steps has to be taken. Therefore the following repeats only the necessary steps.
+In our paper we mainly did experiments with the [ShapeNet](https://shapenet.org/) dataset, but preprocessed in two different falvours. The following describes the preprocessing for both alternatives. Note that they work individually, hence there is no need to prepare both. (When wanting to train with noise I would recommend the Onet data, since the supervision of the IF-Net data is concentrated so close to the boundary that the problem get a bit ill-posed (adapting noise level and supervision distance can solve this, however).)
 
-To run the preparation processes please use the provided `if-net_env.yml` file, containing all necessary dependencies for the preprocessing. Afterwards, two small libraries have to be built using
+
+## Prepating the IF-Net data
+
+This data preparation pipeline is mainly copied from [IF-Nets](https://github.com/jchibane/if-net), but slightly simplified.
+
+Install a small library needed for the preprocessing using
 ```
 cd data_processing/libmesh/
 python setup.py build_ext --inplace
 cd ../..
 ```
-Note that the fully prepared data will consume a few hundred GB of storage and as the IF-Net authors note:
+Furthermore you might need to install `meshlab` and `xvfb` using
+```
+apt-get update
+apt-get install meshlab
+apt-get install xvfb
+```
 
-> This project uses libraries for [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et. al. CVPR'19] 
-> and the ShapeNet data preprocessed for [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], please also cite them if you use our code.
+To install gcc you can run `sudo apt install build-essential`.
 
 
-To get started, download the [ShapeNet](https://www.shapenet.org/) data preprocessed by [Xu et. al. NeurIPS'19] from [Google Drive](https://drive.google.com/drive/folders/1QGhDW335L7ra31uw5U-0V7hB-viA0JXr)
+To get started, download the preprocessed data by [Xu et. al. NeurIPS'19] from [Google Drive](https://drive.google.com/drive/folders/1QGhDW335L7ra31uw5U-0V7hB-viA0JXr)
 into the `shapenet` folder.
 
 Then extract the files into `shapenet\data` using:
@@ -62,18 +75,35 @@ python preprocessing/sample_surface.py
 ```
 which samples 30.000 point uniformly distributed on the surface of the ground truth mesh. During training and testing the input point clouds will be randomly subsampled from these surface samples.
 
-The coordinates and corresponding ground truth occupancy values used as supervision during training can be generated using
+The coordinates and corresponding ground truth occupancy values used for supervision during training can be generated using
 ```
 python preprocessing/boundary_sampling.py -sigma 0.1
 python preprocessing/boundary_sampling.py -sigma 0.01
 ```
-where `-sigma` specifies the standard deviation of the normally distributed displacements added onto surface samples. Each call will generate 100.000 samples near the object's surface for which ground truth occupancy values are generated using the implicit waterproofing algorithm from [IF-Nets supplementary](http://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet_supp.pdf).
+where `-sigma` specifies the standard deviation of the normally distributed displacements added onto surface samples. Each call will generate 100.000 samples near the object's surface for which ground truth occupancy values are generated using the implicit waterproofing algorithm from [IF-Nets supplementary](http://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet_supp.pdf). I have not experimented with any other values for sigma, and just copied the proposed values.
 
-
-In order to remove meshes that could not be preprocessed (should not be more than around 15 meshes) you should run
+In order to remove meshes that could not be preprocessed correctly (should not be more than around 15 meshes) you should run
 ```
 python preprocessing/filter_corrupted.py -file 'surface_30000_samples.npy' -delete
 ```
+Pay attantion with this command, i.e. the directory of all objects that don't contain the `surface_30000_samples.npy` file are deleted. If you chose to use a different number points, please make sure to adapt the command accordingly.
+
+The data can then be found in `shapenet/data`.
+
+## Preparing the data used in Occupancy Networks and Convolutional Occupancy Networks
+
+Too parapre the ONet data clone their [repository](https://github.com/autonomousvision/occupancy_networks). Navigate to their repo `cd occupancy_networks` and run
+
+```
+bash scripts/download_data.sh
+
+```
+which will download and unpack the data automatically (consuming 73.4 GB). 
+From the main repository this will place the data in `occupancy_networks/data/ShapeNet`.
+
+## Preparing the FAUST dataset
+In order to download the FAUST dataset visit http://faust.is.tue.mpg.de and sign-up there.
+Once your account is approved you can download a `.zip`-file nameed `MPI-FAUST.zip`. Please place the extracted folder in the main folder, such that the data can be found in `MPI-FAUST`.
 
 
 # Training
@@ -133,7 +163,7 @@ python data_processing/evaluate_gather.py -generation_path experiments/YOUR_EXP_
 
 
 # Pretrained Models
-Not published yet, as the code has to be reworked and the model arhcitecture might still change slightly.
+To be released within the next few days
 
 # Contact
 simon.giebenhain (at] uni-konstanz {dot| de
@@ -152,6 +182,8 @@ organization={IEEE}
 
 # Acknowledgements
 A huge thanks to Julian Chibane, the author of IF-Nets and the corresponding [GitHub](https://github.com/jchibane/if-net) repository, that serves as a baseline for this repo. Please also cite their work!
+This project uses libraries for [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et. al. CVPR'19] 
+> and the ShapeNet data preprocessed for [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], please also cite them if you use our code.
 
 
 
