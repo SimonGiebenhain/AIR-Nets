@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import cKDTree as KDTree
-from preprocessing.implicit_waterproofing import implicit_waterproofing
+from data_processing.implicit_waterproofing import implicit_waterproofing
 
 
 def eval_mesh( mesh_pred, mesh_gt, bb_min, bb_max, n_points=100000):
