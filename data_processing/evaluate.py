@@ -1,4 +1,4 @@
-from data_processing.evaluation import eval_mesh, eval_meshOnet
+from evaluation import eval_mesh, eval_meshOnet
 import trimesh
 import pickle as pkl
 import os
