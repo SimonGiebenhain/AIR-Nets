@@ -101,7 +101,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument('-generation_path', type=str)
-    parser.add_argument('-dataset_type', required=True)
+    parser.add_argument('-data_type', required=True)
 
 
     args = parser.parse_args()

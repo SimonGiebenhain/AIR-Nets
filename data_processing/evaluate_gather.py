@@ -19,7 +19,7 @@ if __name__ == '__main__' and not repair:
     parser.set_defaults(voxel_input=True)
     parser.add_argument('-res',type=int)
     parser.add_argument('-points',type=int)
-    parser.add_argument('-dataset_type', required=True)
+    parser.add_argument('-data_type', required=True)
     parser.add_argument('-test_equiv', action='store_true')
     parser.set_defaults(rerun=False)
 

@@ -292,6 +292,9 @@ class ElementwiseMLP(nn.Module):
     """
     Simple MLP, consisting of two linear layers, a skip connection and batch norm.
     More specifically: linear -> BN -> ReLU -> linear -> BN -> ReLU -> resCon -> BN
+
+    Sorry for that many norm layers. I'm sure not all are needed!
+    At some point it was just too late to change it to something proper!
     """
     def __init__(self, dim):
         super().__init__()
@@ -991,7 +994,7 @@ def get_encoder(CFG):
                                             nfinal_transformers=CFG_enc['nfinal_trans'],
                                             d_transformer=CFG_enc['encoder_attn_dim'],
                                             d_reduced=CFG_enc['encoder_attn_dim_reduced'],
-                                            full_SA=CFG_enc['full_SA'])
+                                            full_SA=CFG_enc.get('full_SA', True))
     elif CFG_enc['type'] == 'pointnet++':
         encoder = PointNetEncoder(npoints_per_layer=CFG_enc['npoints_per_layer'],
                                   nneighbor=CFG_enc['encoder_nneigh'],

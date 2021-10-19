@@ -39,7 +39,7 @@ def update_split():
     for set in ['train','test','val']:
         filterd_set = split[set].copy()
         for path in split[set]:
-            if not os.path.exists('shapenet/data/' + path):
+            if not os.path.exists(ROOT + path):
                 print('Filtered: ' + path)
                 filterd_set = np.delete(filterd_set, np.where(filterd_set == path))
         split_dict[set] = filterd_set

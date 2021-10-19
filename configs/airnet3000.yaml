@@ -17,7 +17,6 @@ encoder:
   encoder_nneigh_reduced: 10
   nfinal_trans: 3
   encoder_attn_dim_reduced: 120
-  full_SA: True
 decoder:
   type: 'airnet'
   decoder_attn_dim: 200

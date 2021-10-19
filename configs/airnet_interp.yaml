@@ -17,7 +17,6 @@ encoder:
   encoder_nneigh_reduced: 16
   nfinal_trans: 3
   encoder_attn_dim_reduced: 256
-  full_SA: True
 decoder:
   type: 'interp' # 'ldif'
   decoder_attn_dim: 200

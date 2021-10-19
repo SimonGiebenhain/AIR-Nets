@@ -179,7 +179,7 @@ def get_shapenet_dataset(mode, dataset_type, CFG):
     noisy_obs = CFG['mode']['noisy_obs']
     vox = CFG['encoder']['type'] == 'ifnet'
     if dataset_type == 'onet':
-        data_path = 'occupancy_networks/data/ShapeNet',  # TODO
+        data_path = 'occupancy_networks/data/ShapeNet'
     else:
         data_path = 'shapenet/data'
     return ShapeReconstructionDataset(mode, dataset_type, data_path,
