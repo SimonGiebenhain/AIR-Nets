@@ -29,7 +29,7 @@ python setup.py build_ext --inplace
 ```
 installs the MISE algorithm (see http://www.cvlibs.net/publications/Mescheder2019CVPR.pdf) for extracting the reconstructed shapes as meshes.
 
-## I am missing instructions for torch scatter!
+When you want to run Convolutional Occupancy Networks you will have to install `torch scatter` using the official instructions found [here](https://github.com/rusty1s/pytorch_scatter).
 
 # Data Preparation
 In our paper we mainly did experiments with the [ShapeNet](https://shapenet.org/) dataset, but preprocessed in two different falvours. The following describes the preprocessing for both alternatives. Note that they work individually, hence there is no need to prepare both. (When wanting to train with noise I would recommend the Onet data, since the supervision of the IF-Net data is concentrated so close to the boundary that the problem get a bit ill-posed (adapting noise level and supervision distance can solve this, however).)
@@ -107,34 +107,23 @@ Once your account is approved you can download a `.zip`-file nameed `MPI-FAUST.z
 
 
 # Training
+
+For the training and model specification I use `.yaml` files. Their structure is explained [here](https://github.com/SimonGiebenhain/AIR-Nets/configs/README.md).
+
 To train the model run
 ```
-python train.py -exp_name YOUR_EXP_NAME -pc_samples NUM_INPUT_POINTS
+python train.py -exp_name YOUR_EXP_NAME -cfg_file configs/YOUR_CFG_FILE -data_type YOUR_DATA_TYPE
 ```
-which stores results in `experiments/YOUR_EXP_NAME`. `-pc_samples` dicates how many points will be subsampled as input during training.
-Make sure adapt the optional argument `-batch_size` to your GPU size. 
+which stores results in `experiments/YOUR_EXP_NAME`. `-cfg_file` specifies the path to the config file. The content of the config file will then also be sotred in `experiments/config.yaml`. `YOUR_DATA_TYPE` can either be `'ifnet'`, `'onet'` or `'human'` and dictates which dataset to use.
+Make sure to adapt the `batch_size` parameter in the config file accoridng to your GPU size.
 
-Checkpoints are saved every epoch and you can view the tensorboard logs using
+Training progress is saved using tensorboard. Visualize it using
 ```
-tensorboard --logdir experiments/name_of_exp/summary/ --host 0.0.0.0
+tensorboard --logdir experiments/YOUR_EXP_NAME/summary/ 
 ```
 
-The model hyperparameters are specified using the `CFG` dictionary in the `train.py` file, that has to be manually modified. The most important, non-obvious hyperparameters are listed below:
-+ `npoints_decoder`: number of points used as supervision, we used `1.000` for all experiments (IF-Nets used 50.000)
-+ `encoder_attn_dim`: number of dimensions used throught the whole model (i.e. dims in linear layers and inside vector attention)
-+ `npoints_per_layer`: specifies downsampling stages and number of downsampling layers, i.e. `[300, 200, 100]` was used for sparse setting, which means that that the input point with 300 points is downsampled to 200 and then downsampled to 100. `[3000, 500, 100]` was used for dense setting.
-+ `encoder_nneigh`: The number of neighbors used for the local attention mechanism, as well as for the set abstraction module. `16` was used for all experiments
-+ `enocder_nneigh_reduced`: The number of neighbors used for the very first transformer block. Was set to `16` for sparse, but to `10` for the dense setting, as computing local attention for 3000 points is quite expensive.
-+  `encoder_attn_dim_reduced`: Number of dimensions used for first transformer block.
-+ `nfinal_trans`: Number of final transformer blocks acting on `npoints_per_layer[-1]` points; was set to 3 for all experiments.
-+ `full_SA`: Boolean; specifies whether to use full self attention; Always set to `True`.
-+ `shift`: Boolean; specifies whether network should learn to predict translations for each point; only beneficial for specific data.
-+ `decoder_attn_dim`: Number of dimensions to be used in cross vector attention in decoder.
-+ `decoder_nneigh`: Number of neighbors for cross vectora attention.
-+ `decoder_hidden_dim`: Number of dimensions to be used in simple feed-forward-network (FFN) for final occupancy prediction.
-+ `decoder_nblocks`: Number of blocks in final FFN.
+Note that checkpoints (including the optimizer) are saved after each epoch in the `checkpoints` folder. Therefore training can seamlessly be continued.
 
-The config dictionary will be stored in `experiments/YOUR_EXP_NAME/configs.json` and loaded when continuing training.
 
 # Generation
 To generate the reconstructed meshes for the test set, run
