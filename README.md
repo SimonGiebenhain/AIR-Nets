@@ -1,4 +1,8 @@
-# AIR-Nets
+# Attentive Implicit Representation Networks (AIR-Nets)
+[Preprint](https://github.com/SimonGiebenhain/AIR-Nets/tree/main/AIR-Nets.pdf) | [Supplementary](https://github.com/SimonGiebenhain/AIR-Nets/tree/main/AIR-Nets_supp.pdf) | Accepted at the International Conference on 3D Vision (3DV)
+
+https://user-images.githubusercontent.com/28050396/138076268-b82b0de0-e148-46e8-a427-ac1016a339bb.mov
+
 
 This repository is the offical implementation of the paper 
 
