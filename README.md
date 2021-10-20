@@ -1,5 +1,12 @@
 # AIR-Nets
-Attentive Implicit Representation Networks (AIR-Nets)  
+
+This repository is the offical implementation of the paper 
+
+*AIR-Nets: An Attention-Based Framework for Locally Conditioned Implicit Representations*  
+by *Simon Giebenhain* and *Bastian Goldluecke*
+
+Furthermore it provides a unified framework to execute [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks), [Convolutional Occuapncy Networks](https://github.com/autonomousvision/convolutional_occupancy_networks) and [IF-Nets](https://github.com/jchibane/if-net).  
+
 
 ![](GIFS/teaser.gif)
 
@@ -21,7 +28,7 @@ Run
 ```
 pip install pointnet2_ops_lib/.
 ```
-inorder to install the cuda implementation of farthest point sampling (FPS).
+inorder to install the cuda implementation of farthest point sampling (FPS). Credits for this go to Erik Wijams's [GitHub](https://github.com/erikwijmans/Pointnet2_PyTorch), from where the code was copied for convenience.
 
 Running
 ```
@@ -36,6 +43,8 @@ In our paper we mainly did experiments with the [ShapeNet](https://shapenet.org/
 
 
 ## Prepating the IF-Net data
+
+> A small disclaimer: Preparing the data as in this tutorial will produce ~700GB of data. Deleting the `.obj` and `.off` files should reduce the load to 250GB. Storage demand can further be reduced by reducing the number of samples in `data_processing/boundary_sampling.py`. If storage is scarce the ONet data (see below) is an alternative.
 
 This data preparation pipeline is mainly copied from [IF-Nets](https://github.com/jchibane/if-net), but slightly simplified.
 
@@ -74,7 +83,6 @@ Then the point cloud input data can be created using
 python data_processing/sample_surface.py
 ```
 which samples 30.000 point uniformly distributed on the surface of the ground truth mesh. During training and testing the input point clouds will be randomly subsampled from these surface samples.
-
 The coordinates and corresponding ground truth occupancy values used for supervision during training can be generated using
 ```
 python data_processing/boundary_sampling.py -sigma 0.1
@@ -169,7 +177,8 @@ organization={IEEE}
 
 # Acknowledgements
 Large parts of this repository are copied from Julian Chibane's [GitHub repository](https://github.com/jchibane/if-net) of the [IF-Net](https://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet.pdf) paper. Please consider also citing their work, when using this repository!
-This project also uses libraries form [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et al. CVPR'19](https://avg.is.tuebingen.mpg.de/publications/occupancy-networks) and from [Convolutional Occupancy Networks](https://github.com/autonomousvision/convolutional_occupancy_networks) by [Peng et al. ECCV'20].
+
+This project also uses libraries form [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et al. CVPR'19](https://avg.is.tuebingen.mpg.de/publications/occupancy-networks) and from [Convolutional Occupancy Networks](https://github.com/autonomousvision/convolutional_occupancy_networks) by [Peng et al. ECCV'20].  
  We also want to thank [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], who provided their preprocessed ShapeNet data publicly.
  Please consider to cite them if you use our code.
 
