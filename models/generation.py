@@ -24,7 +24,7 @@ def create_grid_points_from_bounds(minimun, maximum, res, scale=None):
 
 
 class Generator(object):
-    def __init__(self, encoder, decoder, threshold, exp_name, checkpoint=None, path=None, device=torch.device("cuda"),
+    def __init__(self, encoder, decoder, threshold, exp_name, checkpoint=None, ckpt_name=None, device=torch.device("cuda"),
                  resolution=128, batch_points=1000000, is_IF=False, method='mise'):
         self.encoder = encoder.to(device)
         self.encoder.eval()
@@ -33,7 +33,7 @@ class Generator(object):
         self.threshold = threshold
         self.device = device
         self.resolution = resolution
-        self.path = path
+        self.ckpt_name = ckpt_name
         self.checkpoint_dir = os.path.dirname(__file__) + '/../experiments/{}/checkpoints/'.format(exp_name)
         self.is_IF = is_IF
         self.load_checkpoint(checkpoint)
@@ -161,7 +161,7 @@ class Generator(object):
             checkpoints = np.sort(checkpoints)
             path = self.checkpoint_dir + 'checkpoint_epoch_{}.tar'.format(checkpoints[-1])
         elif checkpoint is None:
-            path = self.path
+            path = self.checkpoint_dir + self.ckpt_name
         else:
             path = self.checkpoint_dir + 'checkpoint_epoch_{}.tar'.format(checkpoint)
         print('Loaded checkpoint from: {}'.format(path))
