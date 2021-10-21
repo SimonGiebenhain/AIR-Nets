@@ -24,7 +24,7 @@ def create_grid_points_from_bounds(minimun, maximum, res, scale=None):
 
 
 class Generator(object):
-    def __init__(self, encoder, decoder, threshold, exp_name, checkpoint=None, device=torch.device("cuda"),
+    def __init__(self, encoder, decoder, threshold, exp_name, checkpoint=None, path=None, device=torch.device("cuda"),
                  resolution=128, batch_points=1000000, is_IF=False, method='mise'):
         self.encoder = encoder.to(device)
         self.encoder.eval()
@@ -33,7 +33,8 @@ class Generator(object):
         self.threshold = threshold
         self.device = device
         self.resolution = resolution
-        self.checkpoint_path = os.path.dirname(__file__) + '/../experiments/{}/checkpoints/'.format(exp_name)
+        self.path = path
+        self.checkpoint_dir = os.path.dirname(__file__) + '/../experiments/{}/checkpoints/'.format(exp_name)
         self.is_IF = is_IF
         self.load_checkpoint(checkpoint)
         self.batch_points = batch_points
@@ -149,29 +150,26 @@ class Generator(object):
         mesh = libsimplify.simplify_mesh(mesh, 100000, 5.)
         return mesh
 
-    def load_checkpoint(self, checkpoint):
-        if checkpoint is None:
-            checkpoints = glob(self.checkpoint_path+'/*')
+    def load_checkpoint(self, checkpoint=None, path=None):
+        if checkpoint is None and self.path is None:
+            checkpoints = glob(self.checkpoint_dir + '/*')
             if len(checkpoints) == 0:
-                print('No checkpoints found at {}'.format(self.checkpoint_path))
+                print('No checkpoints found at {}'.format(self.checkpoint_dir))
 
             checkpoints = [os.path.splitext(os.path.basename(path))[0][17:] for path in checkpoints]
             checkpoints = np.array(checkpoints, dtype=int)
             checkpoints = np.sort(checkpoints)
-            path = self.checkpoint_path + 'checkpoint_epoch_{}.tar'.format(checkpoints[-1])
+            path = self.checkpoint_dir + 'checkpoint_epoch_{}.tar'.format(checkpoints[-1])
+        elif checkpoint is None:
+            path = self.path
         else:
-            path = self.checkpoint_path + 'checkpoint_epoch_{}.tar'.format(checkpoint)
+            path = self.checkpoint_dir + 'checkpoint_epoch_{}.tar'.format(checkpoint)
         print('Loaded checkpoint from: {}'.format(path))
         checkpoint = torch.load(path, map_location=self.device)
         if self.is_IF:
-            # bc. the model was trained as a whole all parameters are present in the encoder state dict (the only state dict)
+            # bc. the model was trained as a whole all parameters are present in the encoder state dict (the only state dict) #todo
             self.encoder.load_state_dict(checkpoint['encoder_state_dict'])
             self.decoder.load_state_dict(checkpoint['decoder_state_dict'])
         else:
-            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.0.weight']
-            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.0.bias']
-            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.2.weight']
-            #del checkpoint['decoder_state_dict']['ct1.fc_delta2.2.bias']
-            #torch.save(checkpoint, path)
             self.encoder.load_state_dict(checkpoint['encoder_state_dict'])
             self.decoder.load_state_dict(checkpoint['decoder_state_dict'])

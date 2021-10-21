@@ -12,14 +12,6 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-exp_name', required=True, type=str)
 parser.add_argument('-cfg_file', type=str)
-#TODO incorporate in yaml
-parser.add_argument('-interp_dec', action='store_true')
-parser.set_defaults(interp_dec=False)
-parser.add_argument('-pointnet_enc', action='store_true')
-parser.set_defaults(pointnet_enc=False)
-
-parser.add_argument('-pc_samples' , default=300, type=int)
-parser.add_argument('-batch_size' , default=64, type=int)
 parser.add_argument('-cuda_device', default=0, type=int)
 parser.add_argument('-data_type', required=True, type=str)
 
