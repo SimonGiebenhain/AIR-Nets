@@ -18,7 +18,7 @@ parser.add_argument('-mcubes_res', default=256, type=int)
 parser.add_argument('-mise_res', default=64, type=int)
 parser.add_argument('-mise_steps', default=2, type=int)
 parser.add_argument('-checkpoint', type=int)
-parser.add_argument('-path', type=str)
+parser.add_argument('-ckpt_name', type=str)
 parser.add_argument('-exp_name', required=True, type=str)
 parser.add_argument('-cuda_device', default=0, type=int)
 parser.add_argument('-data_type', required=True, type=str)
@@ -32,7 +32,7 @@ try:
 except:
     args = parser.parse_known_args()[0]
 
-assert args.checkpoint is not None or args.path is not None
+assert args.checkpoint is not None or args.ckpt_name is not None
 
 exp_dir = './experiments/{}/'.format(args.exp_name)
 fname = exp_dir + 'configs.yaml'
@@ -67,7 +67,7 @@ if args.method == 'mcubes':
 else:
     retrieval_specs = (args.mise_res, args.mise_steps)
     retrieval_specs_str = str(retrieval_specs[0]) + 'x' + str(retrieval_specs[1])
-gen = Generator(encoder, decoder, 0.5, args.exp_name, checkpoint=args.checkpoint, path=args.path, resolution=retrieval_specs,
+gen = Generator(encoder, decoder, 0.5, args.exp_name, checkpoint=args.checkpoint, ckpt_name=args.ckpt_name, resolution=retrieval_specs,
                     batch_points=args.batch_points, is_IF=is_IF, method=args.method)
 
 out_path = 'experiments/{}/evaluation_{}_@{}'.format(args.exp_name, args.checkpoint, retrieval_specs_str)
