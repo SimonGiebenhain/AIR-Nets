@@ -158,7 +158,12 @@ python data_processing/evaluate_gather.py -generation_path experiments/YOUR_EXP_
 
 
 # Pretrained Models
-To be released within the next few days.
+
+Weights of trained models can be found [here](https://drive.google.com/drive/folders/1_WiBfpVf8k-DvbOzy1QY34qM4uC2sfEJ?usp=sharing). For example create a folder `experiments/PRETRAINED_MODEL`, placing the corresponding config file in `experiments/PRETRAINED_MODEL/configs.yaml` and the weights in `experiments/PRETRAINED_MODEL/checkpoints/ckpt.tar`. Then run 
+
+```
+python generate.py -exp_name PRETRAINED_MODEL -ckpt_name ckpt.tar -data_type DATA_TYPE
+```
 
 # Contact
 For questions, comments and to discuss ideas please contact Simon Giebenhain via simon.giebenhain (at] uni-konstanz {dot| de.
