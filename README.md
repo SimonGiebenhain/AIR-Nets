@@ -41,6 +41,16 @@ When you want to run Convolutional Occupancy Networks you will have to install `
 In our paper we mainly did experiments with the [ShapeNet](https://shapenet.org/) dataset, but preprocessed in two different falvours. The following describes the preprocessing for both alternatives. Note that they work individually, hence there is no need to prepare both. (When wanting to train with noise I would recommend the Onet data, since the supervision of the IF-Net data is concentrated so close to the boundary that the problem gets a bit ill-posed (adapting noise level and supervision distance can solve this, however).)
 
 
+## Preparing the data used in ONets and ConvONets
+To parapre the ONet data clone their [repository](https://github.com/autonomousvision/occupancy_networks). Navigate to their repo `cd occupancy_networks` and run
+
+```
+bash scripts/download_data.sh
+
+```
+which will download and unpack the data automatically (consuming 73.4 GB). 
+From the perspective of the main repository this will place the data in `occupancy_networks/data/ShapeNet`.
+
 ## Prepating the IF-Net data
 
 > A small disclaimer: Preparing the data as in this tutorial will produce ~700GB of data. Deleting the `.obj` and `.off` files should reduce the load to 250GB. Storage demand can further be reduced by reducing the number of samples in `data_processing/boundary_sampling.py`. If storage is scarce the ONet data (see below) is an alternative.
@@ -65,6 +75,8 @@ To install gcc you can run `sudo apt install build-essential`.
 
 To get started, download the preprocessed data by [Xu et. al. NeurIPS'19] from [Google Drive](https://drive.google.com/drive/folders/1QGhDW335L7ra31uw5U-0V7hB-viA0JXr)
 into the `shapenet` folder.
+
+> Please note that some objects in this dataset were made watertight "incorrectly". More specifically some object parts are "double coated", such that the object boundary actually is composed of two boundaries which lie very close together. Therefor the "inside" of such objects lies in between these two boundaries, whereas the "true inside" would be classified as outside. This clearly can lead to ugly reconstructionsl, since representing such a thin "inside" is much trickier. 
 
 Then extract the files into `shapenet\data` using:
 
@@ -97,16 +109,6 @@ Pay attantion with this command, i.e. the directory of all objects that don't co
 
 Finally the data should be located in `shapenet/data`.
 
-## Preparing the data used in ONets and ConvONets
-
-To parapre the ONet data clone their [repository](https://github.com/autonomousvision/occupancy_networks). Navigate to their repo `cd occupancy_networks` and run
-
-```
-bash scripts/download_data.sh
-
-```
-which will download and unpack the data automatically (consuming 73.4 GB). 
-From the perspective of the main repository this will place the data in `occupancy_networks/data/ShapeNet`.
 
 ## Preparing the FAUST dataset
 In order to download the FAUST dataset visit http://faust.is.tue.mpg.de and sign-up there.
@@ -115,7 +117,7 @@ Once your account is approved you can download a `.zip`-file nameed `MPI-FAUST.z
 
 # Training
 
-For the training and model specification I use `.yaml` files. Their structure is explained separately [here](https://github.com/SimonGiebenhain/AIR-Nets/configs/README.md).
+For the training and model specification I use `.yaml` files. Their structure is explained in a separate markdown file [here](https://github.com/SimonGiebenhain/AIR-Nets/configs/README.md), which also has explanations which parameters can tune the model to become less memory intensive.
 
 To train the model run
 ```
